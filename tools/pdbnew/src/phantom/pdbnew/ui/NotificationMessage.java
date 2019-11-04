@@ -11,8 +11,9 @@ public class NotificationMessage extends JLabel {
     public NotificationMessage(String msg, NotificationType nt) {
         super(msg);
         setFont(new Font("Fira Code", Font.PLAIN, 14));
-        setForeground(nt.getColor());
-        setIcon(new ImageIcon(UIUtil.getScaledImage(nt.getIcon().getImage(), IMAGE_SIZE, IMAGE_SIZE)));
+        setForeground(nt.getFgColor(UIUtil.theme));
+        setBackground(nt.getBgColor(UIUtil.theme));
+        setIcon(new ImageIcon(UIUtil.getScaledImage(nt.getIcon(UIUtil.theme).getImage(), IMAGE_SIZE, IMAGE_SIZE)));
         // THAT is what we need, AWFUL GLASS ICONS!
         // LOOK AT THIS BEAUTY! https://www.iconfinder.com/iconsets/DarkGlass_Reworked
     }

@@ -8,7 +8,7 @@ public class NotificationPanel extends JPanel {
         super();
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setSize(200, 200);
-        setBackground(Color.DARK_GRAY);
+        //setBackground(Color.DARK_GRAY);
     }
 
     public void notify(String msg, NotificationType notificationType) {

@@ -56,4 +56,8 @@ public class Debugger implements Receiver {
     public void onReceive(String type, Object msg) {
 
     }
+
+    public Object[][] getUIReadyDataFor(int objectId) {
+        return new Object[0][0];
+    }
 }

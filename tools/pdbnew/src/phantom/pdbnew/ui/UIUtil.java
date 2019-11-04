@@ -1,7 +1,12 @@
 package phantom.pdbnew.ui;
 
+import phantom.pdbnew.ui.themes.DefaultTheme;
+import phantom.pdbnew.ui.themes.NeoTheme;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
+
+
 
 public class UIUtil {
     public static Image getScaledImage(Image srcImg, int w, int h){
@@ -14,6 +19,6 @@ public class UIUtil {
 
         return resizedImg;
     }
-
+    public static UITheme theme = new NeoTheme();
     public static final String RESOURCES_PATH = "/Users/mishka/Documents/GitHub/phantomuserland/tools/pdbnew/resources/";
 }

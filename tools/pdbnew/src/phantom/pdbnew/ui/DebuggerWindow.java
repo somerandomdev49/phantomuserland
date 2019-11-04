@@ -12,21 +12,23 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.Random;
 
 /**
  * @author somerandomdev49
  * @see phantom.pdbnew.pdb.Debugger
  */
-public class DebuggerWindow extends JFrame implements Receiver {
+public class DebuggerWindow extends JFrame implements Receiver, UIConstructor {
     public Debugger debugger;
     NotificationPanel np;
     UITransmitter uit;
+    PObjectPanel pop; // pop!
     public DebuggerWindow() {
 //        super((Window) null);
         super();
         //setModal(true);
         setTitle("Phantom Debugger.");
-        initializeUI();
+        onConstructUI();
         setSize(400, 400);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setVisible(true);
@@ -61,9 +63,11 @@ public class DebuggerWindow extends JFrame implements Receiver {
 
     private void UI_newDumpView() {
         try {
+            pop = new PObjectPanel();
             debugger = new Debugger(getByteBufferFromFile());
-            uit = new UITransmitter(debugger, this);
+            uit = new UITransmitter(debugger, this, pop);
             debugger.uit = uit;
+            pop.uit = uit;
             debugger.load();
         } catch (IOException e1) {
             e1.printStackTrace();
@@ -71,10 +75,10 @@ public class DebuggerWindow extends JFrame implements Receiver {
     }
 
     //<--////////////////////// UI //////////////////////-->//
-
-    private void initializeUI() {
+    @Override
+    public void onConstructUI() {
         JToolBar tb = new JToolBar(JToolBar.HORIZONTAL);
-        initializeToolbar(tb);
+        onConstructToolbar(tb);
         //JButton viewButton = new JButton("View!");
         //viewButton.addActionListener(e -> {
         //
@@ -87,22 +91,41 @@ public class DebuggerWindow extends JFrame implements Receiver {
         add(panel);
     }
 
-    private void initializeToolbar(JToolBar tb) {
+    @Override
+    public void onConstructToolbar(JToolBar tb) {
         tb.setFloatable(false);
-        tb.add(makeNavigationButton("add", e -> {
-            UI_newDumpView();
-        }, "View new dump.", "add"));
+        tb.add(
+                makeNavigationButton(
+                        UIUtil.theme.getUrl_icon_resource_add(),
+                        e -> UI_newDumpView(),
+                        "View new dump.",
+                        "add"
+                )
+        );
+        tb.add(
+                makeNavigationButton(
+                        UIUtil.theme.getUrl_icon_resource_inf(),
+                        e -> {
+                            np.notify(
+                                    "<RANDOM MESSAGE>",
+                                    NotificationType.values()[
+                                            new Random().nextInt(
+                                                    NotificationType.values().length
+                                            )
+                                            ]
+                            );
+                            revalidate();
+                        },
+                        "Random notification.",
+                        "info"
+                )
+        );
     }
 
-    protected JButton makeNavigationButton(String imageName,
+    protected JButton makeNavigationButton(String imgLocation,
                                            ActionListener l,
                                            String toolTipText,
                                            String altText) {
-        //Look for the image.
-        String imgLocation =
-                UIUtil.RESOURCES_PATH
-                + imageName
-                + ".png";
         //URL imageURL = ToolBarDemo.class.getResource(imgLocation);
 
         //Create and initialize the button.

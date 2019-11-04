@@ -12,30 +12,44 @@ public enum NotificationType {
     SUCCESS;
 
 
-    Color getColor() {
+    Color getFgColor(UITheme theme) {
         switch(this) { // oh no, this weird switch syntax...
             case INFO:
-                return Color.BLUE;
+                return theme.getColor_notification_fg_inf();
             case ERROR:
-                return Color.RED;
+                return theme.getColor_notification_fg_err();
             case SUCCESS:
-                return Color.GREEN;
+                return theme.getColor_notification_fg_scs();
             case WARNING:
-                return Color.YELLOW;
+                return theme.getColor_notification_fg_wrn();
         }
         return Color.BLACK;
     }
 
-    ImageIcon getIcon() {
+    Color getBgColor(UITheme theme) {
+        switch(this) { // oh no, this weird switch syntax...
+            case INFO:
+                return theme.getColor_notification_bg_inf();
+            case ERROR:
+                return theme.getColor_notification_bg_err();
+            case SUCCESS:
+                return theme.getColor_notification_bg_scs();
+            case WARNING:
+                return theme.getColor_notification_bg_wrn();
+        }
+        return Color.BLACK;
+    }
+
+    ImageIcon getIcon(UITheme theme) {
         switch(this) {
             case INFO:
-                return new ImageIcon(RESOURCES_PATH+"info.png");
+                return new ImageIcon(theme.getUrl_icon_resource_inf());
             case ERROR:
-                return new ImageIcon(RESOURCES_PATH+"error.png");
+                return new ImageIcon(theme.getUrl_icon_resource_err());
             case SUCCESS:
-                return new ImageIcon(RESOURCES_PATH+"success.png");
+                return new ImageIcon(theme.getUrl_icon_resource_scs());
             case WARNING:
-                return new ImageIcon(RESOURCES_PATH+"warning.png");
+                return new ImageIcon(theme.getUrl_icon_resource_wrn());
         }
         return new ImageIcon();
     }
