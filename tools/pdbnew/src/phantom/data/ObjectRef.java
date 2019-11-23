@@ -4,7 +4,6 @@ import java.nio.ByteBuffer;
 
 
 
-
 /**
  * struct pvm_object
  * {
@@ -47,8 +46,8 @@ public class ObjectRef {
 	}
 
 	// TODO 64 bit problem
-	// Intellij said that 0xFFFFFFFF & (long) dataAddr can be simplified.
-	public long getDataAddr()      {		return dataAddr;	}
+	// Intellij said that 0xFFFFFFFF & (long) dataAddr can be simplified but...
+	public long getDataAddr()      {		return 0xFFFFFFFF & (long)dataAddr;	}
 	//public long getInterfaceAddr() {		return 0xFFFFFFFF & (long)interfaceAddr;	}
 	public long getInterfaceAddr() {		return 0;	}
 

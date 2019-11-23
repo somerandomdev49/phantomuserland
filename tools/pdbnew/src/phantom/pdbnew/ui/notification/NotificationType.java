@@ -1,9 +1,9 @@
-package phantom.pdbnew.ui;
+package phantom.pdbnew.ui.notification;
+
+import phantom.pdbnew.ui.system.UITheme;
 
 import javax.swing.*;
 import java.awt.*;
-
-import static phantom.pdbnew.ui.UIUtil.RESOURCES_PATH;
 
 public enum NotificationType {
     INFO,

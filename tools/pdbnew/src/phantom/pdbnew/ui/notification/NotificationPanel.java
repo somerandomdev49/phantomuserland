@@ -1,7 +1,6 @@
-package phantom.pdbnew.ui;
+package phantom.pdbnew.ui.notification;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class NotificationPanel extends JPanel {
     public NotificationPanel() {
@@ -12,6 +11,7 @@ public class NotificationPanel extends JPanel {
     }
 
     public void notify(String msg, NotificationType notificationType) {
-        add(new NotificationMessage(msg, notificationType));
+        add(new NotificationMessage(this, msg, notificationType));
+        getParent().revalidate();
     }
 }

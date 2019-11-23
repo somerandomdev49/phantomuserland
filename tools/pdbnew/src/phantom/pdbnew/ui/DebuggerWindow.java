@@ -1,12 +1,14 @@
 package phantom.pdbnew.ui;
 
-import phantom.pdbnew.Receiver;
-import phantom.pdbnew.UITransmitter;
+import phantom.pdbnew.ui.system.UITransmitter;
 import phantom.pdbnew.pdb.Debugger;
+import phantom.pdbnew.ui.notification.NotificationPanel;
+import phantom.pdbnew.ui.notification.NotificationType;
+import phantom.pdbnew.ui.system.UIUtil;
+import phantom.pdbnew.ui.system.UIWindow;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -14,31 +16,33 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Random;
 
+import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
+
 /**
  * @author somerandomdev49
  * @see phantom.pdbnew.pdb.Debugger
  */
-public class DebuggerWindow extends JFrame implements Receiver, UIConstructor {
+public class DebuggerWindow extends UIWindow {
     public Debugger debugger;
-    NotificationPanel np;
-    UITransmitter uit;
-    PObjectPanel pop; // pop!
+    private NotificationPanel np;
+    private PObjectPanel pop; // pop!
     public DebuggerWindow() {
 //        super((Window) null);
-        super();
+        //super(new JFrame("Phantom Debugger"));
+        initializeLog(getClass());
         //setModal(true);
-        setTitle("Phantom Debugger.");
+        self.setTitle("Phantom Debugger.");
         onConstructUI();
-        setSize(400, 400);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setVisible(true);
+        self.setSize(400, 400);
+        self.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        self.setVisible(true);
     }
 
 
 
     private ByteBuffer getByteBufferFromFile() throws IOException {
         JFileChooser fCh = new JFileChooser("/Users/mishka/Documents/GitHub/phantomuserland/tools/pdbnew/data");
-        if(fCh.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+        if(fCh.showOpenDialog(self) == JFileChooser.APPROVE_OPTION) {
             File file = fCh.getSelectedFile();
             InputStream initialStream = new FileInputStream(file);
             return ByteBuffer.wrap(initialStream.readAllBytes());
@@ -57,18 +61,25 @@ public class DebuggerWindow extends JFrame implements Receiver, UIConstructor {
         if(type.equals("start-success")) {
             System.out.println("Debugger successfully started! [SUCCESS]");
             np.notify("Debugger successfully started!", NotificationType.SUCCESS);
-            revalidate();
+        } else if(type.equals("start-error")) {
+            System.out.println("Something went wrong while starting Debugger! [ERROR]");
+            np.notify("Something went wrong while starting Debugger!", NotificationType.ERROR);
         }
     }
 
     private void UI_newDumpView() {
         try {
-            pop = new PObjectPanel();
-            debugger = new Debugger(getByteBufferFromFile());
-            uit = new UITransmitter(debugger, this, pop);
-            debugger.uit = uit;
-            pop.uit = uit;
-            debugger.load();
+            ByteBuffer bb = getByteBufferFromFile();
+            if(bb != null) {
+                pop = new PObjectPanel(null);
+                debugger = new Debugger(bb);
+                uit = new UITransmitter(debugger, this, pop);
+                debugger.uit = uit;
+                pop.uit = uit;
+                debugger.load();
+            } else {
+                np.notify("File loading canceled!", NotificationType.WARNING);
+            }
         } catch (IOException e1) {
             e1.printStackTrace();
         }
@@ -84,63 +95,44 @@ public class DebuggerWindow extends JFrame implements Receiver, UIConstructor {
         //
         //});
         JPanel panel = new JPanel(new BorderLayout());
+        panel.add(new ObjectViewUI().self);
         np = new NotificationPanel();
         //panel.add(viewButton);
-        panel.add(np, BorderLayout.SOUTH);
+        panel.add(np, BorderLayout.PAGE_END);
         panel.add(tb, BorderLayout.PAGE_START);
-        add(panel);
+        self.add(panel);
     }
 
     @Override
     public void onConstructToolbar(JToolBar tb) {
         tb.setFloatable(false);
         tb.add(
-                makeNavigationButton(
-                        UIUtil.theme.getUrl_icon_resource_add(),
+                navButton(
+                        UIUtil.theme.getUrl_icon_resource_file(),
                         e -> UI_newDumpView(),
                         "View new dump.",
                         "add"
                 )
         );
         tb.add(
-                makeNavigationButton(
+                navButton(
                         UIUtil.theme.getUrl_icon_resource_inf(),
                         e -> {
                             np.notify(
-                                    "<RANDOM MESSAGE>",
+                                    "Message",
                                     NotificationType.values()[
                                             new Random().nextInt(
                                                     NotificationType.values().length
                                             )
                                             ]
                             );
-                            revalidate();
+
                         },
                         "Random notification.",
                         "info"
                 )
         );
     }
-
-    protected JButton makeNavigationButton(String imgLocation,
-                                           ActionListener l,
-                                           String toolTipText,
-                                           String altText) {
-        //URL imageURL = ToolBarDemo.class.getResource(imgLocation);
-
-        //Create and initialize the button.
-        JButton button = new JButton();
-        button.setToolTipText(toolTipText);
-        button.addActionListener(l);
-        button.setIcon(new ImageIcon(UIUtil.getScaledImage(new ImageIcon(imgLocation, altText).getImage(), 32, 32)));
-        //} else {                                     //no image found
-        //    button.setText(altText);
-        //    System.err.println("Resource not found: " + imgLocation);
-        //}
-
-        return button;
-    }
-
 
 
     public static void main(String args[]) {

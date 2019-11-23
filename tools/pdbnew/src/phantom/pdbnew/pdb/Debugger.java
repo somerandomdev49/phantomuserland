@@ -3,13 +3,13 @@ import phantom.data.DataLoadException;
 import phantom.data.ObjectFlags;
 import phantom.data.ObjectHeader;
 import phantom.data.ObjectRef;
+import phantom.pdbnew.Debug;
 import phantom.pdbnew.Receiver;
-import phantom.pdbnew.UITransmitter;
+import phantom.pdbnew.ui.system.UITransmitter;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 
 public class Debugger implements Receiver {
@@ -17,6 +17,14 @@ public class Debugger implements Receiver {
     public UITransmitter uit;
     public Debugger(ByteBuffer m) {
         memory = m;
+    }
+
+    public static class SimplePObject {
+        public ArrayList<SimplePObject> links;
+        public long id;
+        public SimplePObject() {
+
+        }
     }
 
     public void load() {
@@ -30,16 +38,42 @@ public class Debugger implements Receiver {
         //memory.get((int) ((h.getDataAddr() - 800000000)/8));
         try {
             m.loadHeader(memory);
+            System.out.println("=" + m.getObjectFlags());
             uit.send("start-success", null);
-            doStuff();
+            doStuff(m);
         } catch (DataLoadException e) {
             e.printStackTrace();
         }
 
     }
 
-    private void doStuff() {
-        // TODO: Do stuff...
+    private ObjectHeader processObject(ByteBuffer b) throws DataLoadException {
+        ObjectHeader h = new ObjectHeader();
+        ObjectRef r = new ObjectRef(b);
+        b.order(ByteOrder.LITTLE_ENDIAN);
+        //System.out.println("H: " + (int)(r.getDataAddr()-0x80000000));
+        int rawDataAddr = (int) r.getDataAddr();
+        if(rawDataAddr==0)Debug.log("Data address of field is all 0s!");
+        else h.loadHeader(memory.position(rawDataAddr-0x80000000));
+        return h;
+    }
+
+    private void doStuff(ObjectHeader m) throws DataLoadException {
+        // TODO: Stuff...
+        int fieldAmount = m.getDaSize() / 4;
+        Debug.log("Fields to process: " + fieldAmount);
+        ByteBuffer b = m.getDataArea();
+        b.order(ByteOrder.LITTLE_ENDIAN);
+        ArrayList<ObjectHeader> fields = new ArrayList<>();
+        for(int i=0;i<fieldAmount;i++) {
+            Debug.log("Processing field #"+i+"!");
+            try {
+                fields.add(processObject(b));
+            } catch(Exception e) {
+                Debug.log("An error occurred while processing field #" + i + ":");
+                Debug.log(e.getMessage(),1);
+            }
+        }
     }
 
     private ArrayList<ObjectRef> getFields() {

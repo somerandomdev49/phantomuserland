@@ -1,0 +1,15 @@
+{
+  "color_notification_bg_inf": {"r": 0, "g": 0, "b": 0},
+  "color_notification_fg_inf": {"r": 0, "g": 0, "b": 255},
+  "color_notification_bg_err": {"r": 0, "g": 0, "b": 0},
+  "color_notification_fg_err": {"r": 255, "g": 0, "b": 0},
+  "color_notification_bg_wrn": {"r": 0, "g": 0, "b": 0},
+  "color_notification_fg_wrn": {"r": 255, "g": 255, "b": 0},
+  "color_notification_bg_scs": {"r": 0, "g": 0, "b": 0},
+  "color_notification_fg_scs": {"r": 0, "g": 255, "b": 0},
+  "url_icon_resource_inf": "info",
+  "url_icon_resource_err": "error",
+  "url_icon_resource_wrn": "warning",
+  "url_icon_resource_scs": "success",
+  "url_icon_resource_file": "file"
+}
