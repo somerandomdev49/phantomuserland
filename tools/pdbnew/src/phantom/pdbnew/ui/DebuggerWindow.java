@@ -1,6 +1,6 @@
 package phantom.pdbnew.ui;
 
-import phantom.pdbnew.ui.system.UITransmitter;
+import phantom.pdbnew.ui.app.MainWindow;
 import phantom.pdbnew.pdb.Debugger;
 import phantom.pdbnew.ui.notification.NotificationPanel;
 import phantom.pdbnew.ui.notification.NotificationType;
@@ -60,10 +60,10 @@ public class DebuggerWindow extends UIWindow {
     public void onReceive(String type, Object msg) {
         if(type.equals("start-success")) {
             System.out.println("Debugger successfully started! [SUCCESS]");
-            np.notify("Debugger successfully started!", NotificationType.SUCCESS);
+            np.notifyMessage("Debugger successfully started!", NotificationType.SUCCESS);
         } else if(type.equals("start-error")) {
             System.out.println("Something went wrong while starting Debugger! [ERROR]");
-            np.notify("Something went wrong while starting Debugger!", NotificationType.ERROR);
+            np.notifyMessage("Something went wrong while starting Debugger!", NotificationType.ERROR);
         }
     }
 
@@ -73,12 +73,12 @@ public class DebuggerWindow extends UIWindow {
             if(bb != null) {
                 pop = new PObjectPanel(null);
                 debugger = new Debugger(bb);
-                uit = new UITransmitter(debugger, this, pop);
-                debugger.uit = uit;
-                pop.uit = uit;
+                //uit = new UITransmitter(debugger, this, null);
+                //debugger.uit = uit;
+                //pop.uit = uit;
                 debugger.load();
             } else {
-                np.notify("File loading canceled!", NotificationType.WARNING);
+                np.notifyMessage("File loading canceled!", NotificationType.WARNING);
             }
         } catch (IOException e1) {
             e1.printStackTrace();
@@ -118,7 +118,7 @@ public class DebuggerWindow extends UIWindow {
                 navButton(
                         UIUtil.theme.getUrl_icon_resource_inf(),
                         e -> {
-                            np.notify(
+                            np.notifyMessage(
                                     "Message",
                                     NotificationType.values()[
                                             new Random().nextInt(
@@ -136,7 +136,8 @@ public class DebuggerWindow extends UIWindow {
 
 
     public static void main(String args[]) {
-        DebuggerWindow dw = new DebuggerWindow();
+        MainWindow dw = new MainWindow();
+
         // transmitter moved to dw.
         //dw.cleanup();
     }

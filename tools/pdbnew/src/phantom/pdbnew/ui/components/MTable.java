@@ -17,6 +17,8 @@ public class MTable extends JPanel {
     //public ArrayList<String> names;
     private Component[][] rows;
     private String[] names;
+
+    public GridLayout layout;
     //public Class<JLabel> defaultColumnNameComponent;
 
     public MTable(Component[][] data, String[] columnNames) {
@@ -26,11 +28,12 @@ public class MTable extends JPanel {
         UI();
     }
 
-    public void UI() {
+    private void UI() {
         int i = rows.length + 1;
         int j = rows[0].length;
         JPanel[][] panelHolder = new JPanel[i][j];
-        setLayout(new GridLayout(i,j));
+        layout = new GridLayout(i,j);
+        setLayout(layout);
 
         for(int m = 0; m < i; m++) {
             for(int n = 0; n < j; n++) {

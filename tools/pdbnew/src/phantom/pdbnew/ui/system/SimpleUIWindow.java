@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.event.ActionListener;
 
 public abstract class SimpleUIWindow extends ThemedUI<JFrame> {
-    public UITransmitter uit;
+
 
     public SimpleUIWindow(JFrame self) {
         super(self);

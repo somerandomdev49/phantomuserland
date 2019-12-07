@@ -4,6 +4,7 @@ import phantom.pdbnew.ui.system.UITheme;
 
 import java.awt.*;
 
+@Deprecated
 public class DefaultTheme extends UITheme {
     public DefaultTheme() {
         color_notification_bg_inf=Color.WHITE  ;

@@ -30,7 +30,7 @@ public class UIUtil {
     public static final String RESOURCES_PATH = "/Users/mishka/Documents/GitHub/phantomuserland/tools/pdbnew/resources/";
 
     static {
-        theme = loadTheme("default");
+        theme = loadTheme("neo");
     }
 
     public static UITheme loadTheme(String name) {

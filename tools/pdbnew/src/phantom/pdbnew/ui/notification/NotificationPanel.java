@@ -10,7 +10,7 @@ public class NotificationPanel extends JPanel {
         //setBackground(Color.DARK_GRAY);
     }
 
-    public void notify(String msg, NotificationType notificationType) {
+    public void notifyMessage(String msg, NotificationType notificationType) {
         add(new NotificationMessage(this, msg, notificationType));
         getParent().revalidate();
     }

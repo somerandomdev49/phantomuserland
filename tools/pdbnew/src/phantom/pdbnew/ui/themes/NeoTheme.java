@@ -4,6 +4,7 @@ import phantom.pdbnew.ui.system.UITheme;
 
 import java.awt.*;
 
+@Deprecated
 public class NeoTheme extends UITheme {
     public NeoTheme() {
         color_notification_bg_inf=Color.WHITE  ;

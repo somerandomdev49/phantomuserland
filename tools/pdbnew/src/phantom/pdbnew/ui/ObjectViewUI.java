@@ -1,5 +1,6 @@
 package phantom.pdbnew.ui;
 
+import phantom.pdbnew.ui.app.ObjectView;
 import phantom.pdbnew.ui.system.ThemedUI;
 
 import javax.swing.*;
