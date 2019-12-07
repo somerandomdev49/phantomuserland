@@ -81,7 +81,7 @@ public class MainWindow extends UIWindow {
                 uit = new UITransmitter(db, this);
                 db.uit = uit;
                 db.load();
-                objectView = new MainWindowObjectView(db.dereferenceSimpleObject(null, -1), self.getWidth(), self.getHeight());
+                objectView = new MainWindowObjectView(db.dereferenceSimpleObject(null, -1));
                 objectView.uit = uit;
                 self.add(objectView.self);
                 self.revalidate();

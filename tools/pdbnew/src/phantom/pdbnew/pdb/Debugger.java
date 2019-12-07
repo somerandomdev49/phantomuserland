@@ -71,6 +71,7 @@ public class Debugger implements Receiver {
         ByteBuffer b = h.getDataArea();
         b.order(ByteOrder.LITTLE_ENDIAN);
         s.addr = addr;
+        s.h = h;
         //ArrayList<ProcessedObject> fields = new ArrayList<>();
         for(int i=0;i<fieldAmount;i++) {
             Debug.log("Processing field #"+i+"!");

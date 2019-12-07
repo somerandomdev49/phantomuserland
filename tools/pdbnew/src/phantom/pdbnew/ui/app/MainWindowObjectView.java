@@ -1,11 +1,15 @@
 package phantom.pdbnew.ui.app;
 
+import phantom.data.ObjectFlags;
+import phantom.data.ObjectHeader;
 import phantom.pdbnew.Debug;
 import phantom.pdbnew.pdb.SimplePObject;
 import phantom.pdbnew.pdb.SimplePObjectRef;
 import phantom.pdbnew.ui.components.MTable;
 import phantom.pdbnew.ui.notification.NotificationType;
 import phantom.pdbnew.ui.system.ThemedUI;
+import phantom.pdbnew.ui.system.UI;
+import phantom.pdbnew.ui.system.UIUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,20 +22,15 @@ import java.util.HashMap;
 public class MainWindowObjectView extends ThemedUI<JPanel> implements ActionListener {
     private MTable table;
 
-    private GridBagConstraints c;
-    private BorderLayout l;
-
-    private int _ParentWidth, _ParentHeight;
-
-    public JScrollPane sp;
-    public SimplePObject o; // current.
+    private JTabbedPane tp;
+    JScrollPane sp;
+    private SimplePObject o; // current.
+    private JPanel infoPanel;
     //public SimplePObject p = null; // previous.
 
-    public MainWindowObjectView(SimplePObject o, int _ParentWidth, int _ParentHeight) {
+    MainWindowObjectView(SimplePObject o) {
         super(new JPanel());
         this.o = o;
-        this._ParentWidth = _ParentWidth;
-        this._ParentHeight = _ParentHeight;
         onInitializeUI();
         onConstructUI();
     }
@@ -44,6 +43,7 @@ public class MainWindowObjectView extends ThemedUI<JPanel> implements ActionList
     @Override
     public void onConstructUI() {
         self.setLayout(new BorderLayout());
+        self.add(tp);
         // Button to go back.
 
         /*
@@ -64,9 +64,50 @@ public class MainWindowObjectView extends ThemedUI<JPanel> implements ActionList
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         //sp.setPreferredSize(new Dimension(_ParentWidth, _ParentHeight));
-        self.add(sp, BorderLayout.CENTER);
+        //self.add(sp, BorderLayout.CENTER);
+
+        infoPanel.add(new JLabel("Object@"+Integer.toHexString((int)o.addr)));
+        infoPanel.add(new JLabel("Flags: "+Integer.toBinaryString(o.h.getObjectFlags())));
+        infoPanel.add(generateFlagPanel());
+
+        tp.addTab("View", UIUtil.newIcon("refresh"), sp);
+        tp.addTab("Object", UIUtil.newIcon("info"), infoPanel);
+        self.add(tp);
         self.revalidate();
         self.repaint();
+    }
+    public static boolean hasFlag(int comp, int flag) {
+        return (comp & flag) == flag;
+    }
+    @FunctionalInterface
+    public interface StringTransformer {
+        String transform(String s);
+    }
+    public static ArrayList<String> getObjectFlags(SimplePObject o, StringTransformer t) {
+        ArrayList<String> l = new ArrayList<>();
+        int flags = o.h.getObjectFlags();
+        if(hasFlag(flags, ObjectFlags.PHANTOM_OBJECT_STORAGE_FLAG_IS_INTERNAL)) {
+            l.add(t.transform("internal"));
+        } else if(hasFlag(flags, ObjectFlags.PHANTOM_OBJECT_STORAGE_FLAG_IS_INT)) {
+            l.add(t.transform("int"));
+        } else if(hasFlag(flags, ObjectFlags.PHANTOM_OBJECT_STORAGE_FLAG_IS_STRING)) {
+            l.add(t.transform("string"));
+        }
+        return l;
+    }
+
+    public static ArrayList<String> getObjectFlags(SimplePObject o) {
+        return getObjectFlags(o, s -> s);
+    }
+
+    private JPanel generateFlagPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.add(new JLabel("Flags: " + String.join(", ", getObjectFlags(o))), BorderLayout.PAGE_START);
+        return panel;
+    }
+
+    private JPanel generateValuePanel() {
+        return null;
     }
 
     @Override
@@ -108,7 +149,7 @@ public class MainWindowObjectView extends ThemedUI<JPanel> implements ActionList
             table.layout.setVgap(0);
         }
         //self.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
-        l = new BorderLayout();
+        BorderLayout l = new BorderLayout();
 
         // component list for MTable.
         ArrayList<Component> components = new ArrayList<>();
@@ -125,12 +166,19 @@ public class MainWindowObjectView extends ThemedUI<JPanel> implements ActionList
 
         // Convert from ArrayList to Component[][].
         // Thanks, ->https://codereview.stackexchange.com/questions/126368/converting-a-list-of-integers-into-a-two-dimensional-array-in-java
-        Component[][] data = components.stream()
+        Component[][] data =
+                components.stream()
                 .map(c -> new Component[]{c})
-                .toArray(Component[][]::new);
+                .toArray(Component[][]::new)
+        ;
 
         // Set the table.
         table = new MTable(data, new String[]{"Object@"+Integer.toHexString((int)o.addr)});
+
+        infoPanel = new JPanel();
+        infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.PAGE_AXIS));
+
+        tp = new JTabbedPane();
     }
 
     @Override
