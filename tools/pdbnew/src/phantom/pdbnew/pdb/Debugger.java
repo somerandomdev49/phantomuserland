@@ -64,19 +64,22 @@ public class Debugger implements Receiver {
         return new ProcessedObject(h, rawDataAddr-0x80000000);
     }
 
-    private SimplePObject simplify(ObjectHeader h) {
+    private SimplePObject simplify(ObjectHeader h, long addr) {
         SimplePObject s = new SimplePObject(0,null);
         int fieldAmount = h.getDaSize() / 4;
         Debug.log("Fields to process: " + fieldAmount);
         ByteBuffer b = h.getDataArea();
         b.order(ByteOrder.LITTLE_ENDIAN);
+        s.addr = addr;
         //ArrayList<ProcessedObject> fields = new ArrayList<>();
         for(int i=0;i<fieldAmount;i++) {
             Debug.log("Processing field #"+i+"!");
             try {
                 //ProcessedObject o = processObject(b);
                 ObjectRef ref = new ObjectRef(b);
-                s.links.add(new SimplePObjectRef(i, null, ref.getDataAddr()-0x80000000));
+                if(ref.getDataAddr() != 0 && ref.getDataAddr() - 0x80000000 != 0) {
+                    s.links.add(new SimplePObjectRef(i, null, ref.getDataAddr() - 0x80000000));
+                }
             } catch(Exception e) {
                 Debug.log("An error occurred while processing field #" + i + ":");
                 Debug.log(e.getMessage(),1);
@@ -103,7 +106,7 @@ public class Debugger implements Receiver {
 //                Debug.log(e.getMessage(),1);
 //            }
 //        }
-        simplify(m);
+        simplify(m, 0);
     }
 
     @Deprecated
@@ -128,7 +131,7 @@ public class Debugger implements Receiver {
             try {
                 m.loadHeader(memory);
                 uit.getMainWindow().notifyMessage("dereferenceSimpleObject(null)", NotificationType.INFO);
-                return simplify(m);
+                return simplify(m, 0);
             } catch (DataLoadException e) {
                 e.printStackTrace();
             }
@@ -142,7 +145,7 @@ public class Debugger implements Receiver {
                     m.loadHeader(memory.position((int) ref.addr));
                     uit.getMainWindow().notifyMessage("dereferenceSimpleObject(!null, "+linkN+")", NotificationType.INFO);
                     //uit.send("start-success", null);
-                    return simplify(m);
+                    return simplify(m, ref.addr);
                 } catch (DataLoadException e) {
                     e.printStackTrace();
                 }

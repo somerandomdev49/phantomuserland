@@ -43,6 +43,23 @@ public class MainWindowObjectView extends ThemedUI<JPanel> implements ActionList
 
     @Override
     public void onConstructUI() {
+        self.setLayout(new BorderLayout());
+        // Button to go back.
+
+        /*
+        ALT, please.
+        ¡™£¢∞§¶•ªº–≠
+        œ∑á®†¥öîøπ“‘
+        åß∂ƒ©˙∆˚¬…æ«
+        àΩ≈ç√∫ñµ≤≥
+         */
+        JButton backButton = new JButton("←");
+        backButton.setActionCommand("MainWindowObjectView_ObjectBack");
+        backButton.addActionListener(this);
+        // Disable the button if there's no previous object.
+        backButton.setEnabled(o.parentObject!=null);
+        linkify(backButton);
+        self.add(backButton, BorderLayout.PAGE_START);
         sp = new JScrollPane(table,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -76,7 +93,7 @@ public class MainWindowObjectView extends ThemedUI<JPanel> implements ActionList
     }
 
     private Component componentFromSimplePObjectRef(SimplePObjectRef o) {
-        JButton b = new JButton("Object@" + o.addr);
+        JButton b = new JButton("Object@" + Integer.toHexString((int)o.addr));
         //b.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         linkify(b);
         b.addActionListener(this);
@@ -96,12 +113,8 @@ public class MainWindowObjectView extends ThemedUI<JPanel> implements ActionList
         // component list for MTable.
         ArrayList<Component> components = new ArrayList<>();
 
-        // Button to go back.
-        JButton backButton = new JButton("<-");
-        // Disable the button if there's no previous object.
-        //backButton.setEnabled(o.parentObject!=null);
-        linkify(backButton);
-        components.add(backButton);
+
+        //components.add(backButton);
 
         // Add all links.
         for(SimplePObjectRef ref : o.links) {
@@ -117,7 +130,7 @@ public class MainWindowObjectView extends ThemedUI<JPanel> implements ActionList
                 .toArray(Component[][]::new);
 
         // Set the table.
-        table = new MTable(data, new String[]{"Object@"+o.addr});
+        table = new MTable(data, new String[]{"Object@"+Integer.toHexString((int)o.addr)});
     }
 
     @Override
@@ -125,8 +138,12 @@ public class MainWindowObjectView extends ThemedUI<JPanel> implements ActionList
         // Extract the action command.
         String cmd = e.getActionCommand();
 
-        /**/ if (cmd.startsWith("MainWindowObjectView_ObjectBack")) {
+        /**/ if (cmd.equals("MainWindowObjectView_ObjectBack")) {
             o = o.parentObject.object;
+            Debug.log("ReInitializing User Interface. (Back)");
+            onInitializeUI();
+            self.removeAll();
+            onConstructUI();
             uit.getMainWindow().notifyMessage("Go: Back!", NotificationType.INFO);
             uit.send("objectview-go-back", null);
         } else if(cmd.startsWith("MainWindowObjectView_Object")) {

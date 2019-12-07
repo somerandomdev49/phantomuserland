@@ -4,6 +4,8 @@ import phantom.pdbnew.ui.system.UIUtil;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class NotificationMessage extends JLabel {
 
@@ -15,6 +17,7 @@ public class NotificationMessage extends JLabel {
         setForeground(nt.getFgColor(UIUtil.theme));
         setBackground(nt.getBgColor(UIUtil.theme));
         setIcon(new ImageIcon(UIUtil.getScaledImage(nt.getIcon(UIUtil.theme).getImage(), IMAGE_SIZE, IMAGE_SIZE)));
+
 //        SwingUtilities.invokeLater(() -> {
 //            try {
 //                Thread.sleep(1000);
