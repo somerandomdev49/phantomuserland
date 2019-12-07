@@ -4,6 +4,7 @@ import phantom.data.ObjectHeader;
 import phantom.data.ObjectRef;
 import phantom.pdbnew.Debug;
 import phantom.pdbnew.Receiver;
+import phantom.pdbnew.ui.notification.NotificationType;
 import phantom.pdbnew.ui.system.UITransmitter;
 
 import java.nio.ByteBuffer;
@@ -123,6 +124,7 @@ public class Debugger implements Receiver {
             ObjectHeader m = new ObjectHeader();
             try {
                 m.loadHeader(memory);
+                uit.getMainWindow().notifyMessage("dereferenceSimpleObject(null)", NotificationType.INFO);
                 return simplify(m);
             } catch (DataLoadException e) {
                 e.printStackTrace();
@@ -135,6 +137,7 @@ public class Debugger implements Receiver {
                 // add 0x before, so nothing was working :D
                 try {
                     m.loadHeader(memory.position((int) ref.addr));
+                    uit.getMainWindow().notifyMessage("dereferenceSimpleObject(!null, "+linkN+")", NotificationType.INFO);
                     //uit.send("start-success", null);
                     return simplify(m);
                 } catch (DataLoadException e) {

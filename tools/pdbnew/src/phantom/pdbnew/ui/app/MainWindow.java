@@ -53,7 +53,6 @@ public class MainWindow extends UIWindow {
     @Override
     public void onInitializeUI() {
         self.setLayout(new BorderLayout());
-
         toolbar = new MainWindowToolbar();
         //objectView = new MainWindowObjectView(new ObjectView(), db.dereferenceSimpleObject(null, -1));
         notificationPanel = new MainWindowNotificationPanel(new NotificationPanel());

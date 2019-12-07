@@ -47,7 +47,6 @@ public class MTable extends JPanel {
 
         for(int m = 1; m < i-1; m++) {
             for(int n = 0; n < j; n++) {
-                System.out.println(m + "  :  " + n);
                 panelHolder[m][n].add(rows[m][n]);
             }
         }

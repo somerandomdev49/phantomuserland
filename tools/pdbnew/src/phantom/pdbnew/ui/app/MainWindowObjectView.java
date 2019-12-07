@@ -62,7 +62,7 @@ public class MainWindowObjectView extends ThemedUI<JPanel> implements ActionList
 
     }
 
-    private void linkfy(JButton b) {
+    private void linkify(JButton b) {
         HashMap<TextAttribute, Object> textAttrMap = new HashMap<>();
         textAttrMap.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
         textAttrMap.put(TextAttribute.FOREGROUND, Color.BLUE);
@@ -78,7 +78,7 @@ public class MainWindowObjectView extends ThemedUI<JPanel> implements ActionList
     private Component componentFromSimplePObjectRef(SimplePObjectRef o) {
         JButton b = new JButton("Object@" + o.addr);
         //b.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        linkfy(b);
+        linkify(b);
         b.addActionListener(this);
         b.setActionCommand("MainWindowObjectView_Object" + o.id);
         return b;
@@ -98,9 +98,9 @@ public class MainWindowObjectView extends ThemedUI<JPanel> implements ActionList
 
         // Button to go back.
         JButton backButton = new JButton("<-");
-        // Disable the button if there's no previous node.
-        backButton.setEnabled(o.parentObject!=null);
-        linkfy(backButton);
+        // Disable the button if there's no previous object.
+        //backButton.setEnabled(o.parentObject!=null);
+        linkify(backButton);
         components.add(backButton);
 
         // Add all links.
@@ -136,7 +136,10 @@ public class MainWindowObjectView extends ThemedUI<JPanel> implements ActionList
             // extract the link number.
             int linkN = Integer.parseInt(cmd);
 
-            uit.getDebugger().dereferenceSimpleObject(o, linkN);
+            Debug.log("MainWindowObjectView->dereferenceSimpleObject(isNull="+(o==null)+", " + linkN + ")");
+            SimplePObject tmp = uit.getDebugger().dereferenceSimpleObject(o, linkN);
+            tmp.parentObject = new SimplePObjectRef(linkN, o, o.addr);
+            o = tmp;
 
             Debug.log("ReInitializing User Interface.");
             onInitializeUI();
