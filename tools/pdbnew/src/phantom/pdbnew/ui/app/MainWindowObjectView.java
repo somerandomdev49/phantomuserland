@@ -127,7 +127,7 @@ public class MainWindowObjectView extends ThemedUI<JPanel> implements ActionList
 
         /**/ if (cmd.startsWith("MainWindowObjectView_ObjectBack")) {
             o = o.parentObject.object;
-            uit.getMainWindow().notifyMessage("BACK!", NotificationType.INFO);
+            uit.getMainWindow().notifyMessage("Go: Back!", NotificationType.INFO);
             uit.send("objectview-go-back", null);
         } else if(cmd.startsWith("MainWindowObjectView_Object")) {
             // remove the first part.
@@ -145,7 +145,7 @@ public class MainWindowObjectView extends ThemedUI<JPanel> implements ActionList
             onInitializeUI();
             self.removeAll();
             onConstructUI();
-            uit.getMainWindow().notifyMessage("OBJECT!", NotificationType.INFO);
+            uit.getMainWindow().notifyMessage("Go: Object!", NotificationType.INFO);
             uit.send("objectview-go-object", null);
         }
     }
