@@ -54,7 +54,7 @@ public class MainWindow extends UIWindow {
     public void onInitializeUI() {
         self.setLayout(new BorderLayout());
         toolbar = new MainWindowToolbar();
-        //objectView = new MainWindowObjectView(new ObjectView(), db.dereferenceSimpleObject(null, -1));
+        //objectView = new MainWindowObjectView(new ObjectView(), db.dereferenceSimpleObjectFromLink(null, -1));
         notificationPanel = new MainWindowNotificationPanel(new NotificationPanel());
 
         if(objectView != null)
@@ -81,7 +81,7 @@ public class MainWindow extends UIWindow {
                 uit = new UITransmitter(db, this);
                 db.uit = uit;
                 db.load();
-                objectView = new MainWindowObjectView(db.dereferenceSimpleObject(null, -1));
+                objectView = new MainWindowObjectView(db.dereferenceSimpleObjectFromLink(null, -1));
                 objectView.uit = uit;
                 self.add(objectView.self);
                 self.revalidate();

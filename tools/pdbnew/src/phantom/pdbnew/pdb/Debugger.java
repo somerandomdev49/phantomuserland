@@ -125,33 +125,36 @@ public class Debugger implements Receiver {
     public void onReceive(String type, Object msg) {
 
     }
+    public SimplePObject dereferenceSimpleObject(SimplePObjectRef ref) {
+        if (ref.object == null) {
+            ObjectHeader m = new ObjectHeader();
+            // there was s thing where i forgot to
+            // add 0x before, so nothing was working :D
+            try {
+                m.loadHeader(memory.position((int) ref.addr));
+                uit.getMainWindow().notifyMessage("dereferenceSimpleObject(!null)", NotificationType.INFO);
+                //uit.send("start-success", null);
+                return simplify(m, ref.addr);
+            } catch (DataLoadException e) {
+                e.printStackTrace();
+            }
+        }
+        return ref.object;
+    }
 
-    public SimplePObject dereferenceSimpleObject(SimplePObject o, int linkN) {
+    public SimplePObject dereferenceSimpleObjectFromLink(SimplePObject o, int linkN) {
         if(o==null) {
             ObjectHeader m = new ObjectHeader();
             try {
                 m.loadHeader(memory);
-                uit.getMainWindow().notifyMessage("dereferenceSimpleObject(null)", NotificationType.INFO);
+                uit.getMainWindow().notifyMessage("dereferenceSimpleObjectFromLink(null)", NotificationType.INFO);
                 return simplify(m, 0);
             } catch (DataLoadException e) {
                 e.printStackTrace();
             }
         } else {
             SimplePObjectRef ref = o.links.get(linkN);
-            if (ref.object == null) {
-                ObjectHeader m = new ObjectHeader();
-                // there was s thing where i forgot to
-                // add 0x before, so nothing was working :D
-                try {
-                    m.loadHeader(memory.position((int) ref.addr));
-                    uit.getMainWindow().notifyMessage("dereferenceSimpleObject(!null, "+linkN+")", NotificationType.INFO);
-                    //uit.send("start-success", null);
-                    return simplify(m, ref.addr);
-                } catch (DataLoadException e) {
-                    e.printStackTrace();
-                }
-            }
-            return ref.object;
+            return dereferenceSimpleObject(ref);
         }
         return null;
     }

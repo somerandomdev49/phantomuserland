@@ -1,14 +1,12 @@
 package phantom.pdbnew.ui.app;
 
 import phantom.data.ObjectFlags;
-import phantom.data.ObjectHeader;
 import phantom.pdbnew.Debug;
 import phantom.pdbnew.pdb.SimplePObject;
 import phantom.pdbnew.pdb.SimplePObjectRef;
 import phantom.pdbnew.ui.components.MTable;
 import phantom.pdbnew.ui.notification.NotificationType;
 import phantom.pdbnew.ui.system.ThemedUI;
-import phantom.pdbnew.ui.system.UI;
 import phantom.pdbnew.ui.system.UIUtil;
 
 import javax.swing.*;
@@ -69,6 +67,11 @@ public class MainWindowObjectView extends ThemedUI<JPanel> implements ActionList
         infoPanel.add(new JLabel("Object@"+Integer.toHexString((int)o.addr)));
         infoPanel.add(new JLabel("Flags: "+Integer.toBinaryString(o.h.getObjectFlags())));
         infoPanel.add(generateFlagPanel());
+        if(o != null && uit != null) {
+            SimplePObject co = uit.getDebugger().dereferenceSimpleObject(o.getClassReference());
+            // 5 things before class_name.
+            infoPanel.add(new JLabel("Class: " + co.getClassName(uit.getDebugger())));
+        }
 
         tp.addTab("View", UIUtil.newIcon("refresh"), sp);
         tp.addTab("Object", UIUtil.newIcon("info"), infoPanel);
@@ -92,6 +95,10 @@ public class MainWindowObjectView extends ThemedUI<JPanel> implements ActionList
             l.add(t.transform("int"));
         } else if(hasFlag(flags, ObjectFlags.PHANTOM_OBJECT_STORAGE_FLAG_IS_STRING)) {
             l.add(t.transform("string"));
+        } else if(hasFlag(flags, ObjectFlags.PHANTOM_OBJECT_STORAGE_FLAG_IS_CLASS)) {
+            l.add(t.transform("class"));
+        } else if(hasFlag(flags, ObjectFlags.PHANTOM_OBJECT_STORAGE_FLAG_IS_INTERFACE)) {
+            l.add(t.transform("interface"));
         }
         return l;
     }
@@ -201,8 +208,8 @@ public class MainWindowObjectView extends ThemedUI<JPanel> implements ActionList
             // extract the link number.
             int linkN = Integer.parseInt(cmd);
 
-            Debug.log("MainWindowObjectView->dereferenceSimpleObject(isNull="+(o==null)+", " + linkN + ")");
-            SimplePObject tmp = uit.getDebugger().dereferenceSimpleObject(o, linkN);
+            Debug.log("MainWindowObjectView->dereferenceSimpleObjectFromLink(isNull="+(o==null)+", " + linkN + ")");
+            SimplePObject tmp = uit.getDebugger().dereferenceSimpleObjectFromLink(o, linkN);
             tmp.parentObject = new SimplePObjectRef(linkN, o, o.addr);
             o = tmp;
 
